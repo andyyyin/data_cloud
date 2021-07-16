@@ -6,11 +6,15 @@ const TRADE_DATA_COL = 'trade_data'
 const ff = {}
 
 ff.saveTradepile = async (data) => {
-	
-	// todo query = id
-	
-	// todo return DB.upsertMany(query, data, TRADE_DATA_COL, DB_NAME)
-	
+	let now = Date.now()
+	for (let item of data) {
+		let query = {id: data.id, tradeState: { $ne: 'closed' }}
+		let update = {
+			$setOnInsert: {create: now},
+			$set: { ...item, update: now }
+		}
+		await DB.upsertOne(query, update, TRADE_DATA_COL, DB_NAME)
+	}
 }
 
 module.exports = ff

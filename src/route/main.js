@@ -1,5 +1,5 @@
 const ff = require('../serve/fifa/main.js')
-const auth = require('../service/authorization/main.js')
+const auth = require('../serve/authorization/main.js')
 
 module.exports = async (app) => {
 
@@ -44,7 +44,7 @@ module.exports = async (app) => {
 	/* --- fifa --- */
 
 	app.post('/ff/tradepile', (req, res) => {
-		const data = req.body.data + ''
+		const data = req.body.data
 		ff.saveTradepile(data).then(() => {
 			res.send('ok')
 		}).catch(err => {

@@ -2,9 +2,13 @@ const {MongoClient, Long} = require('mongodb');
 // const assert = require('assert')
 
 const [,, user, pwd] = process.argv
-const DB_URL = `mongodb://${user}:${pwd}@localhost:27017/?authMechanism=SCRAM-SHA-1`;
+const DB_URL = process.env.NODE_ENV === 'prod' ? 
+	`mongodb://${user}:${pwd}@localhost:27017/?authMechanism=SCRAM-SHA-1` :
+	`mongodb://localhost:27017/`
 
 const client = new MongoClient(DB_URL);
+
+const INT32_MAX = 2147483647
 
 let db;
 
@@ -18,17 +22,11 @@ const connect = () => {
 	})
 }
 
-const dateFilter = (data) => {
-	const toLongTargetKeys = ['time', 'start', 'end']
-	const toStringTargetKeys = ['pid']
+const dataFilter = (data) => {
+	if (!data) return data
 	const filter = (data) => {
-		toLongTargetKeys.forEach(key => {
-			if (data[key] && typeof data[key] === 'number') {
-				data[key] = Long.fromNumber(data[key])
-			}
-		})
-		toStringTargetKeys.forEach(key => {
-			if (data[key] && typeof data[key] !== 'string') {
+		Object.keys(data).forEach(key => {
+			if (data[key] && typeof data[key] === 'number' && data[key] > INT32_MAX) {
 				data[key] = data[key] + ''
 			}
 		})
@@ -53,7 +51,7 @@ const getData = (query, colName, dbName) => {
 	return new Promise(resolve => {
 		const col = getDB(dbName).collection(colName)
 		query = query || {}
-		col.find(dateFilter(query)).toArray(function(err, result) {
+		col.find(dataFilter(query)).toArray(function(err, result) {
 			// assert.equal(err, null);
 			resolve(result)
 		});
@@ -65,7 +63,7 @@ const getOne = (query, colName, dbName) => {
 	return new Promise(resolve => {
 		const col = getDB(dbName).collection(colName)
 		query = query || {}
-		col.findOne(dateFilter(query), {}, function(err, result) {
+		col.findOne(dataFilter(query), {}, function(err, result) {
 			// assert.equal(err, null);
 			resolve(result)
 		});
@@ -77,7 +75,7 @@ const getLastOne = (query, colName, dbName) => {
 	return new Promise(resolve => {
 		const col = getDB(dbName).collection(colName)
 		query = query || {}
-		col.findOne(dateFilter(query), {sort: [['_id', -1]]}, (err, result) => {
+		col.findOne(dataFilter(query), {sort: [['_id', -1]]}, (err, result) => {
 			// assert.equal(err, null);
 			resolve(result)
 		})
@@ -92,7 +90,7 @@ const insertData = (data, colName, dbName) => {
 	return new Promise(resolve => {
 		const col = getDB(dbName).collection(colName)
 		let array = Array.isArray(data) ? data : [data];
-		col.insertMany(dateFilter(array), function(err, result) {
+		col.insertMany(dataFilter(array), function(err, result) {
 			// assert.equal(err, null);
 			// assert.equal(array.length, result.result.n);
 			// assert.equal(array.length, result.ops.length);
@@ -108,7 +106,10 @@ const updateOne = (query, set, colName, dbName, options) => {
 
 	return new Promise(resolve => {
 		const col = getDB(dbName).collection(colName)
-		col.updateOne(dateFilter(query), { $set: dateFilter(set) }, options, function(err, result) {
+		let updateContent = set['$set'] ? set : { $set: dataFilter(set) }
+		updateContent['$set'] = dataFilter(updateContent['$set'])
+		updateContent['$setOnInsert'] && (updateContent['$setOnInsert'] = dataFilter(updateContent['$setOnInsert']))
+		col.updateOne(dataFilter(query), updateContent, options, function(err, result) {
 			// assert.equal(err, null);
 			// assert.equal(1, result.result.n);
 			resolve(result);
