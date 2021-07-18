@@ -1,0 +1,47 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+img{
+    display: block;
+}
+.player-row{
+    display: flex;
+    align-items: center;
+}
+.player-row img{
+    width: 60px;
+    height: 60px;
+}
+.player-row .rating-text{
+    font-size: 18px;
+    font-weight: 600;
+    width: 40px;
+}
+.player-row .pos-text{
+    font-size: 18px;
+    font-weight: 600;
+    width: 60px;
+}
+.player-row .buy-text{
+    font-size: 18px;
+    font-weight: 600;
+    width: 100px;
+}
+.player-row .sale-text{
+    font-size: 18px;
+    font-weight: 600;
+    width: 100px;
+}
+.left-flag{
+    width: 4px;
+    align-self: stretch;
+    margin-right: 10px;
+}
+.left-flag.active{
+    background-color: green;
+}
+
+.left-content{
+    width: 300px;
+}

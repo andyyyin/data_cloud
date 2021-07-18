@@ -26,8 +26,10 @@ const dataFilter = (data) => {
 	if (!data) return data
 	const filter = (data) => {
 		Object.keys(data).forEach(key => {
-			if (data[key] && typeof data[key] === 'number' && data[key] > INT32_MAX) {
-				data[key] = data[key] + ''
+			if (typeof data[key] === 'number' && data[key] > INT32_MAX) {
+				data[key] = Long(data[key] + '')
+			} else if (typeof data[key] === 'object') {
+				filter(data[key])
 			}
 		})
 		return data
@@ -106,12 +108,12 @@ const updateOne = (query, set, colName, dbName, options) => {
 
 	return new Promise(resolve => {
 		const col = getDB(dbName).collection(colName)
-		let updateContent = set['$set'] ? set : { $set: dataFilter(set) }
-		updateContent['$set'] = dataFilter(updateContent['$set'])
-		updateContent['$setOnInsert'] && (updateContent['$setOnInsert'] = dataFilter(updateContent['$setOnInsert']))
-		col.updateOne(dataFilter(query), updateContent, options, function(err, result) {
+		let updateContent = set['$set'] ? set : { $set: set }
+		col.updateOne(dataFilter(query), dataFilter(updateContent), options, function(err, result) {
 			// assert.equal(err, null);
 			// assert.equal(1, result.result.n);
+			if (err) console.error(err)
+			if (result.upsertedCount) console.log(result.upsertedCount)
 			resolve(result);
 		});
 	})

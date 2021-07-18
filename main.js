@@ -22,7 +22,7 @@ const run = async () => {
 		// res.header('Content-Type', 'application/json;charset=utf-8') // 这里全局设置，会导致html无法自动渲染
 		next()
 	})
-	app.use('/page', express.static('web'));
+	app.use('/page', express.static('page'));
 	// 下面是让api可以在application/json格式请求参数下读取数据
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(bodyParser.json());
