@@ -16,7 +16,7 @@ const connect = () => {
 	return new Promise(resolve => {
 		client.connect(function(err) {
 			// assert.equal(err, null)
-			console.log("Connected successfully to server");
+			console.log("connected successfully to data base");
 			resolve()
 		});
 	})
@@ -85,7 +85,7 @@ const getLastOne = (query, colName, dbName) => {
 }
 
 const insertData = (data, colName, dbName) => {
-	if (!data || !data.length) return Promise.resolve()
+	if (!data || (Array.isArray(data) && !data.length)) return Promise.resolve()
 	// assert.equal(typeof data, 'object');
 	// assert.equal(typeof colName, 'string');
 
@@ -96,6 +96,7 @@ const insertData = (data, colName, dbName) => {
 			// assert.equal(err, null);
 			// assert.equal(array.length, result.result.n);
 			// assert.equal(array.length, result.ops.length);
+			if (err) throw err
 			resolve(result)
 		});
 	})
@@ -112,7 +113,7 @@ const updateOne = (query, set, colName, dbName, options) => {
 		col.updateOne(dataFilter(query), dataFilter(updateContent), options, function(err, result) {
 			// assert.equal(err, null);
 			// assert.equal(1, result.result.n);
-			if (err) console.error(err)
+			if (err) throw err
 			if (result.upsertedCount) console.log(result.upsertedCount)
 			resolve(result);
 		});
