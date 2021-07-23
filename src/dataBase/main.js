@@ -2,9 +2,10 @@ const {MongoClient, Long} = require('mongodb');
 // const assert = require('assert')
 
 const [,, user, pwd] = process.argv
+const isDBAuth = !!(user && pwd)
 const DB_URL = process.env.NODE_ENV === 'prod' ? 
 	`mongodb://${user}:${pwd}@localhost:27017/?authMechanism=SCRAM-SHA-1` :
-	`mongodb://localhost:27017/`
+	`mongodb://${isDBAuth ? `${user}:${pwd}@` : ''}localhost:27017/${isDBAuth ? '?authMechanism=SCRAM-SHA-1' : 'cd '}`
 
 const client = new MongoClient(DB_URL);
 
