@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node main.js",
     "prod": "cross-env NODE_ENV=prod node main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
     "body-parser": "^1.19.0",
     "cross-env": "^7.0.3",
     "express": "^4.17.1",
-    "mongodb": "^4.0.0"
+    "mongodb": "^4.0.0",
+    "tools-node": "github:andyyyin/tools-node#04f393a81135079fecc96cfae6700931de66fd48"
   }
 }

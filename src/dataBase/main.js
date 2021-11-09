@@ -13,8 +13,9 @@ const INT32_MAX = 2147483647
 let db;
 
 const connect = () => {
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 		client.connect(function(err) {
+			if (err) { reject(err); return }
 			// assert.equal(err, null)
 			console.log("Connected successfully to server");
 			resolve()
@@ -50,11 +51,12 @@ const getDB = (name) => {
 
 const getData = (query, colName, dbName) => {
 	// assert.equal(typeof colName, 'string');
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 		const col = getDB(dbName).collection(colName)
 		query = query || {}
 		col.find(dataFilter(query)).toArray(function(err, result) {
 			// assert.equal(err, null);
+			if (err) { reject(err); return }
 			resolve(result)
 		});
 	})
@@ -62,11 +64,12 @@ const getData = (query, colName, dbName) => {
 
 const getOne = (query, colName, dbName) => {
 	// assert.equal(typeof colName, 'string');
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 		const col = getDB(dbName).collection(colName)
 		query = query || {}
 		col.findOne(dataFilter(query), {}, function(err, result) {
 			// assert.equal(err, null);
+			if (err) { reject(err); return }
 			resolve(result)
 		});
 	})
@@ -74,11 +77,12 @@ const getOne = (query, colName, dbName) => {
 
 const getLastOne = (query, colName, dbName) => {
 	// assert.equal(typeof colName, 'string');
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 		const col = getDB(dbName).collection(colName)
 		query = query || {}
 		col.findOne(dataFilter(query), {sort: [['_id', -1]]}, (err, result) => {
 			// assert.equal(err, null);
+			if (err) { reject(err); return }
 			resolve(result)
 		})
 	})
@@ -89,13 +93,14 @@ const insertData = (data, colName, dbName) => {
 	// assert.equal(typeof data, 'object');
 	// assert.equal(typeof colName, 'string');
 
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 		const col = getDB(dbName).collection(colName)
 		let array = Array.isArray(data) ? data : [data];
 		col.insertMany(dataFilter(array), function(err, result) {
 			// assert.equal(err, null);
 			// assert.equal(array.length, result.result.n);
 			// assert.equal(array.length, result.ops.length);
+			if (err) { reject(err); return }
 			resolve(result)
 		});
 	})
@@ -106,13 +111,13 @@ const updateOne = (query, set, colName, dbName, options) => {
 	// assert.equal(typeof set, 'object');
 	// assert.equal(typeof colName, 'string');
 
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 		const col = getDB(dbName).collection(colName)
 		let updateContent = set['$set'] ? set : { $set: set }
 		col.updateOne(dataFilter(query), dataFilter(updateContent), options, function(err, result) {
 			// assert.equal(err, null);
 			// assert.equal(1, result.result.n);
-			if (err) console.error(err)
+			if (err) { reject(err); return }
 			if (result.upsertedCount) console.log(result.upsertedCount)
 			resolve(result);
 		});
