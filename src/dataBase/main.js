@@ -2,9 +2,10 @@ const {MongoClient, Long} = require('mongodb');
 // const assert = require('assert')
 
 const [,, user, pwd] = process.argv
-const DB_URL = process.env.NODE_ENV === 'prod' ? 
+const isDBAuth = !!(user && pwd)
+const DB_URL = process.env.NODE_ENV === 'prod' ?
 	`mongodb://${user}:${pwd}@localhost:27017/?authMechanism=SCRAM-SHA-1` :
-	`mongodb://localhost:27017/`
+	`mongodb://${isDBAuth ? `${user}:${pwd}@` : ''}localhost:27017/${isDBAuth ? '?authMechanism=SCRAM-SHA-1' : 'cd '}`
 
 const client = new MongoClient(DB_URL);
 
@@ -17,7 +18,7 @@ const connect = () => {
 		client.connect(function(err) {
 			if (err) { reject(err); return }
 			// assert.equal(err, null)
-			console.log("Connected successfully to server");
+			console.log("connected successfully to data base");
 			resolve()
 		});
 	})
@@ -89,7 +90,7 @@ const getLastOne = (query, colName, dbName) => {
 }
 
 const insertData = (data, colName, dbName) => {
-	if (!data || !data.length) return Promise.resolve()
+	if (!data || (Array.isArray(data) && !data.length)) return Promise.resolve()
 	// assert.equal(typeof data, 'object');
 	// assert.equal(typeof colName, 'string');
 
