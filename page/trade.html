@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name="referrer" content="no-referrer">
 	<title>Title</title>
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="/page/lib/axios.min.js"></script>
+	<script src="/page/lib/vue-2.6.4.min.js"></script>
 	<link rel="stylesheet" href="/page/css/trade.css">
 </head>
 <body>
@@ -21,15 +22,15 @@
 			</div>
 			<div v-for="player in itemList" class="player-row" :style="player | backColor">
 				<div class="left-flag" :class="{active: player.loyaltyBonus}"></div>
-	<!--			<img :src="player | avatarUrl" alt="">-->
-	<!--			<img :src="player | nationUrl" alt="">-->
-	<!--			<img :src="player | teamUrl" alt="">-->
-	<!--			<img :src="player | leagueUrl" alt="">-->
+				<img class="player-head" :src="player | avatarUrl" alt="">
+				<img class="player-nat" :src="player | nationUrl" alt="">
+				<img class="player-club" :src="player | teamUrl" alt="">
+				<img class="player-league" :src="player | leagueUrl" alt="">
 				<div class="rating-text">{{ player.rating }}</div>
 				<div class="pos-text">{{ player.preferredPosition }}</div>
 				<div class="buy-text">{{ player.lastSalePrice }}</div>
 				<div class="sale-text">{{ player.currentBid }}</div>
-				<div class="earn-text">{{ player.earn > 0 ? '+' : '' }}{{ player.earn }}</div>
+				<div class="earn-text" :class="player.earn >= 0 ? 'earn' : 'loss'">{{ player.earn > 0 ? '+' : '' }}{{ player.earn }}</div>
 				<div style="flex: 1"></div>
 				<div style="margin-right: 15px;">{{ player.update | timeFormat }}</div>
 			</div>
@@ -58,10 +59,10 @@
 				if (rareflag === 0) return {backgroundColor: '#826E50'}
 				return {backgroundColor: '#5AA0D2'}
 			},
-			avatarUrl(player) { return `https://cdn.futbin.com/content/fifa21/img/players/${player && player.assetId}.png?v=22` },
-			nationUrl(player) { return `https://cdn.futbin.com/content/fifa21/img/nation/${player && player.nation}.png` },
-			teamUrl(player) { return `https://cdn.futbin.com/content/fifa21/img/clubs/${player && (player.teamid || player.team)}.png` },
-			leagueUrl(player) { return `https://cdn.futbin.com/content/fifa21/img/league/${player && (player.leagueId || player.league)}.png` },
+			avatarUrl(player) { return `https://cdn.futbin.com/content/fifa22/img/players/${player && player.assetId}.png?v=22` },
+			nationUrl(player) { return `https://cdn.futbin.com/content/fifa22/img/nation/${player && player.nation}.png` },
+			teamUrl(player) { return `https://cdn.futbin.com/content/fifa22/img/clubs/${player && (player.teamid || player.team)}.png` },
+			leagueUrl(player) { return `https://cdn.futbin.com/content/fifa22/img/league/${player && (player.leagueId || player.league)}.png` },
 			timeFormat(timeStamp) {
 				let date = new Date(timeStamp)
 				let year = date.getFullYear()  // 获取完整的年份(4位,1970)

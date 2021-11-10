@@ -8,10 +8,12 @@ img{
 .player-row{
     display: flex;
     align-items: center;
+    height: 40px;
+    overflow: hidden;
 }
 .player-row img{
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
 }
 .player-row .rating-text{
     font-size: 18px;
@@ -24,14 +26,25 @@ img{
     width: 60px;
 }
 .player-row .buy-text{
-    font-size: 18px;
+    font-size: 14px;
+    width: 100px;
+    color: dimgrey;
+}
+.player-row .sale-text{
+    font-size: 14px;
+    color: blue;
+    width: 100px;
+}
+.player-row .earn-text{
+    font-size: 16px;
     font-weight: 600;
     width: 100px;
 }
-.player-row .sale-text{
-    font-size: 18px;
-    font-weight: 600;
-    width: 100px;
+.player-row .earn-text.earn{
+    color: darkgreen;
+}
+.player-row .earn-text.loss{
+    color: maroon;
 }
 .left-flag{
     width: 4px;
@@ -44,4 +57,27 @@ img{
 
 .left-content{
     width: 300px;
+}
+
+.player-row .player-head{
+    width: auto;
+    height: 50px;
+    margin-right: 2px;
+}
+
+.player-row .player-nat{
+    height: 20px;
+    width: 30px;
+    margin-right: 6px;
+}
+
+.player-row .player-club{
+    height: 30px;
+    width: auto;
+}
+
+.player-row .player-league{
+    height: 30px;
+    width: auto;
+    margin-right: 15px;
 }
