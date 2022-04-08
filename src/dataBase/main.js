@@ -25,8 +25,8 @@ const connect = () => {
 }
 
 const dataFilter = (data) => {
-	if (!data) return data
 	const filter = (data) => {
+		if (!data) return data
 		Object.keys(data).forEach(key => {
 			if (typeof data[key] === 'number' && data[key] > INT32_MAX) {
 				data[key] = Long(data[key] + '')

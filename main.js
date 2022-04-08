@@ -1,12 +1,15 @@
 const express = require('express')
-const app = express();
 const bodyParser = require('body-parser')
 const route = require('./src/route/main.js')
 const DB = require('./src/dataBase/main.js')
+const task = require('./src/serve/task')
+
+const app = express();
 
 const PORT = 3366
 
 const run = async () => {
+	console.log('\033[40;32m=== DATA CLOUD ===\033[0m')
 
 	/* --- 连接数据库 --- */
 	await DB.connect()
@@ -37,6 +40,8 @@ const run = async () => {
 		console.log(`chaos server listening on port ${PORT}`)
 	})
 
+	/* --- 其他任务 --- */
+	task()
 }
 
 run().then()

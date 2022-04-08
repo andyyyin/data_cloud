@@ -1,30 +1,31 @@
 {
-  "name": "data_cloud",
-  "version": "0.0.1",
-  "description": "",
-  "main": "main.js",
-  "scripts": {
-    "dev": "node main.js",
-    "prod": "cross-env NODE_ENV=prod node main.js",
-    "test": "node test.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/andyyyin/data_cloud.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/andyyyin/data_cloud/issues"
-  },
-  "homepage": "https://github.com/andyyyin/data_cloud#readme",
-  "dependencies": {
-    "axios": "^0.21.1",
-    "body-parser": "^1.19.0",
-    "cross-env": "^7.0.3",
-    "express": "^4.17.1",
-    "mongodb": "^4.0.0",
-    "tools-node": "github:andyyyin/tools-node#04f393a81135079fecc96cfae6700931de66fd48"
-  }
+	"name": "data_cloud",
+	"version": "0.0.1",
+	"description": "",
+	"main": "main.js",
+	"scripts": {
+		"dev": "node main.js",
+		"prod": "cross-env NODE_ENV=prod node main.js",
+		"test": "node test.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/andyyyin/data_cloud.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/andyyyin/data_cloud/issues"
+	},
+	"homepage": "https://github.com/andyyyin/data_cloud#readme",
+	"dependencies": {
+		"axios": "^0.21.1",
+		"body-parser": "^1.19.0",
+		"cross-env": "^7.0.3",
+		"express": "^4.17.1",
+		"mongodb": "^4.0.0",
+		"nodemailer": "^6.7.2",
+		"tools-node": "github:andyyyin/tools-node#e4af844f30429f35ec10faf9b21b778805a22dd0"
+	}
 }
