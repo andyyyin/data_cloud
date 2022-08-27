@@ -1,4 +1,5 @@
 const ff = require('../serve/fifa/main.js')
+const fm = require('../serve/fifa/match')
 const auth = require('../serve/authorization/main.js')
 
 module.exports = async (app) => {
@@ -54,6 +55,42 @@ module.exports = async (app) => {
 
 	app.get('/ff/get-sold', (req, res) => {
 		ff.getSold(req.query).then(result => {
+			res.send(result)
+		}).catch(err => {
+			res.send(err)
+		})
+	})
+
+	/* --- fifa match --- */
+
+	app.get('/fm/get-players', (req, res) => {
+		fm.getPlayers().then(result => {
+			res.send(result)
+		}).catch(err => {
+			res.send(err)
+		})
+	})
+
+	app.get('/fm/get-players-data', (req, res) => {
+		fm.getPlayersData().then(result => {
+			res.send(result)
+		}).catch(err => {
+			res.send(err)
+		})
+	})
+
+	app.get('/fm/get-match-data', (req, res) => {
+		const {matchName} = req.query
+		fm.getMatchData(matchName).then(result => {
+			res.send(result)
+		}).catch(err => {
+			res.send(err)
+		})
+	})
+
+	app.post('/fm/match-data', (req, res) => {
+		const data = req.body
+		fm.saveMatchData(data).then(result => {
 			res.send(result)
 		}).catch(err => {
 			res.send(err)

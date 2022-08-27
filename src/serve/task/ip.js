@@ -13,12 +13,12 @@ const MailInfo = {
 	}
 }
 
-const DetectInterval = 1000 * 60 * 60
+const DetectInterval = 1000 * 60 * 15
 
 let ipCache
 
 const send = ({title, content, address}) => {
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 		try {
 			let transporter = nodemailer.createTransport({
 				secureConnection: false,
@@ -41,8 +41,7 @@ const send = ({title, content, address}) => {
 				resolve(true)
 			});
 		} catch (e) {
-			console.log(e);
-			resolve(false)
+			reject(e)
 		}
 	})
 }
@@ -53,7 +52,9 @@ const dealNewIp = (ip) => {
 	ipCache = ip
 	file.writeFile(LOCAL_CACHE_PATH, ip).then()
 	let address = 'ycwd123@163.com'
-	send({content: ip.split('').reverse().join(''), address}).then()
+	send({content: ip.split('').reverse().join(''), address})
+		.then()
+		.catch(e => console.error(e))
 }
 
 module.exports = async () => {
@@ -61,15 +62,23 @@ module.exports = async () => {
 
 	const detect = async () => {
 		console.log('ip detect')
-		let res = await axios.get('https://ipinfo.io/')
-		let ipData = res && res.data
-		if (!ipData || !ipData.ip || !IP_TEST_REGEX.test(ipData.ip)) {
-			console.log('ip接口异常')
-			console.log(res)
-			return
+		try {
+			let res = await axios.get('https://ipinfo.io/')
+			let ipData = res && res.data
+			if (!ipData || !ipData.ip || !IP_TEST_REGEX.test(ipData.ip)) {
+				console.log('ip接口异常')
+				console.log(res)
+				return
+			}
+			if (ipData.ip === ipCache) return
+			dealNewIp(ipData.ip)
+		} catch (e) {
+			if (e.code === 'ETIMEDOUT') {
+				console.error('ETIMEDOUT')
+			} else {
+				console.error(e)
+			}
 		}
-		if (ipData.ip === ipCache) return
-		dealNewIp(ipData.ip)
 	}
 	setInterval(() => detect().then(), DetectInterval)
 

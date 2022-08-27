@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>GAME DATA</title>
+	<script src="/page/lib/axios.min.js"></script>
+	<script src="/page/lib/vue-2.6.4.min.js"></script>
+</head>
+<style>
+	.table-root {
+	}
+	.table-root .row{
+		display: flex;
+	}
+	.table-root .col{
+		width: 50px;
+		text-align: center;
+		background-color: antiquewhite;
+		border-right: 2px solid #fff;
+		border-bottom: 2px solid #fff;
+	}
+	.table-root .col.w3{
+		width: 65px;
+	}
+	.table-root .col.w4{
+		width: 80px;
+	}
+	.table-root .col.w5{
+		width: 95px;
+	}
+	.table-root .col.w7{
+		width: 125px;
+	}
+
+</style>
+<body>
+	<div id="template">
+		<div class="table-root">
+			<div class="row title">
+				<div class="col w7">球员</div>
+				<div class="col">出场</div>
+				<div class="col">均分</div>
+				<div class="col">进球</div>
+				<div class="col">助攻</div>
+				<div class="col w4">上场时间</div>
+				<div class="col w4">跑动距离</div>
+				<div class="col w3">传球</div>
+				<div class="col w3">射门</div>
+				<div class="col w3">抢断</div>
+				<div class="col w3">盘带</div>
+				<div class="col w4">赢得球权</div>
+				<div class="col w4">失去球权</div>
+				<div class="col w3">犯规</div>
+				<div class="col w3">越位</div>
+				<div class="col w5">传球成功率</div>
+			</div>
+			<div class="row" v-for="player in playerList">
+				<div class="col w7">
+					{{player.player}}
+				</div>
+				<div class="col">
+					{{player['出场']}}
+				</div>
+				<div class="col">
+					{{player['场均评分']}}
+				</div>
+				<div class="col">
+					{{player['进球']}}
+				</div>
+				<div class="col">
+					{{player['助攻']}}
+				</div>
+				<div class="col w4">
+					{{player['上场时间']}}
+				</div>
+				<div class="col w4">
+					{{player['跑动距离']}}
+				</div>
+				<div class="col w3">
+					{{player['传球']}}
+				</div>
+				<div class="col w3">
+					{{player['射门']}}
+				</div>
+				<div class="col w3">
+					{{player['抢断']}}
+				</div>
+				<div class="col w3">
+					{{player['盘带']}}
+				</div>
+				<div class="col w4">
+					{{player['赢得球权']}}
+				</div>
+				<div class="col w4">
+					{{player['失去球权']}}
+				</div>
+				<div class="col w3">
+					{{player['犯规']}}
+				</div>
+				<div class="col w3">
+					{{player['越位']}}
+				</div>
+				<div class="col w5">
+					{{player['传球成功率']}}%
+				</div>
+			</div>
+		</div>
+
+	</div>
+</body>
+<script>
+	const app = new Vue({
+		el: '#template',
+		data() {
+			return {
+				playerList: [],
+			}
+		},
+		filters: {
+		},
+		methods: {
+			load() {
+				axios.get('/fm/get-players-data').then(res => {
+					const playerMap = {}
+					const createPlayerData = (base, next) => {
+						next['出场'] = 1
+						next['场均传球'] = [next['传球']]
+						next['场均评分'] = [next['score']]
+						next['成功传球'] = Math.round(next['传球'] * next['传球精度'] / 100)
+						next['传球成功率'] = [next['传球精度']]
+						next['场均冲刺距离'] = [next['冲刺距离']]
+						next['场均失去球权'] = [next['失去球权']]
+						next['场均射门'] = [next['射门']]
+						next['射门转化率'] = [next['射门精度']]
+						next['抢断成功率'] = [next['抢断成功率']]
+						next['场均赢得球权'] = [next['赢得球权']]
+						next['场均跑动距离'] = [next['跑动距离']]
+						if (!base) return next
+						for (let key of Object.keys(next)) {
+							if (typeof base[key] === 'string') continue
+							if (typeof base[key] === 'number') {
+								base[key] += next[key]
+							}
+							if (typeof base[key] === 'object' && base[key].length) {
+								base[key].push(...next[key])
+							}
+						}
+						return base
+					}
+					for (let data of res.data) {
+						if (data.player === 'match') continue;
+						playerMap[data.player] = createPlayerData(playerMap[data.player], data)
+					}
+					const playerList = Object.values(playerMap)
+					playerList.forEach(player => {
+						for (let key of Object.keys(player)) {
+							if (typeof player[key] === 'object' && player[key].length) {
+								player[key] = Number(player[key].reduce((t, v) => (t + v), 0) / player[key].length).toFixed(1)
+							}
+							if (typeof player[key] === 'number' && !Number.isInteger(player[key])) {
+								player[key] = Number(player[key]).toFixed(1)
+							}
+						}
+					})
+					app.playerList.push(...playerList)
+				})
+			}
+		},
+		created () {
+			this.load()
+		}
+	})
+</script>
+</html>

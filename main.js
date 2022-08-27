@@ -6,7 +6,7 @@ const task = require('./src/serve/task')
 
 const app = express();
 
-const PORT = 3366
+const PORT = process.env.NODE_ENV === 'test' ? 33666 : 3366
 
 const run = async () => {
 	console.log('\033[40;32m=== DATA CLOUD ===\033[0m')

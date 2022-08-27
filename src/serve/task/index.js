@@ -2,5 +2,7 @@ const ipTask = require('./ip')
 
 module.exports = () => {
 	console.log('task start')
-	ipTask().then()
+	if (process.env.NODE_ENV !== 'test') {
+		ipTask().then()
+	}
 }

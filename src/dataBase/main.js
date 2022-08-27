@@ -63,6 +63,16 @@ const getData = (query, colName, dbName) => {
 	})
 }
 
+const getDistinctField = (key, colName, dbName) => {
+	return new Promise((resolve, reject) => {
+		const col = getDB(dbName).collection(colName)
+		col.distinct(key, function(err, result) {
+			if (err) { reject(err); return }
+			resolve(result)
+		});
+	})
+}
+
 const getOne = (query, colName, dbName) => {
 	// assert.equal(typeof colName, 'string');
 	return new Promise((resolve, reject) => {
@@ -119,7 +129,7 @@ const updateOne = (query, set, colName, dbName, options) => {
 			// assert.equal(err, null);
 			// assert.equal(1, result.result.n);
 			if (err) { reject(err); return }
-			if (result.upsertedCount) console.log(result.upsertedCount)
+			if (result.upsertedCount) console.log('upserted', result.upsertedCount)
 			resolve(result);
 		});
 	})
@@ -137,4 +147,5 @@ module.exports = {
 	updateOne,
 	upsertOne,
 	getLastOne,
+	getDistinctField,
 }
